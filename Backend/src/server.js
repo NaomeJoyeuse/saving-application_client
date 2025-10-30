@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const authRoutes = require('./routes/Authroutes');
+const accountRoutes = require('./routes/accountRoutes');
 
 const { errorHandler } = require('./middleware/errorhandling');
 

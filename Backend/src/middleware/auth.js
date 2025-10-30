@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { AppError } = require('./errorHandler');
+const { AppError } = require('./errorhandling');
 
 const authMiddleware = (req, res, next) => {
   try {

@@ -1,5 +1,5 @@
 const db = require('../models');
-const { BalanceDTO, TransactionDTO, AccountDTO } = require('../dtos/AccountDTO');
+const { BalanceDTO, TransactionDTO, AccountDTO } = require('../dtos/accountDtos');
 const { AppError } = require('../middleware/errorhandling');
 
 const Account = db.Account;
