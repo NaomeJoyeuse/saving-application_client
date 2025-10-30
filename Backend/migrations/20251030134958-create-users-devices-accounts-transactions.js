@@ -84,6 +84,11 @@ module.exports = {
         },
         onDelete: 'CASCADE',
       },
+      accountNumber: {
+        type: Sequelize.STRING,  // ✅ FIXED
+        allowNull: false,
+        unique: true,
+      },
       balance: {
         type: Sequelize.DECIMAL(15, 2),
         defaultValue: 0,

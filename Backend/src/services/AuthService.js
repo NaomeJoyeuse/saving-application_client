@@ -1,3 +1,5 @@
+
+
 const db = require('../models');
 const { hashPassword, comparePassword } = require('../utils/passwordEncryption');
 const { generateToken } = require('../utils/jwtToken');
@@ -9,41 +11,61 @@ const Device = db.Device;
 const Account = db.Account;
 
 class AuthService {
+  
+  async generateUniqueAccountNumber() {
+    let accountNumber;
+    let exists = true;
+
+    while (exists) {
+      const randomDigits = Math.floor(10000000 + Math.random() * 90000000);
+      accountNumber = `CJ${randomDigits}`;
+      const existingAccount = await Account.findOne({ where: { accountNumber } });
+      if (!existingAccount) {
+        exists = false;
+      }
+    }
+    return accountNumber;
+  }
+
   async registerCustomer(email, password, fullName, deviceId) {
     try {
-      // Check if user exists
+    
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
         throw new AppError(400, 'Email already registered');
       }
 
-      // Hash password
+      
       const hashedPassword = await hashPassword(password);
 
-      // Create user
+     
       const user = await User.create({
         email,
         password: hashedPassword,
         fullName,
       });
 
-      // Create device (unverified)
+     
       await Device.create({
         userId: user.id,
         deviceId,
         isVerified: false,
       });
 
-      // Create account
+      
+      const accountNumber = await this.generateUniqueAccountNumber();
+
       await Account.create({
         userId: user.id,
         balance: 0,
+        accountNumber: accountNumber,
       });
 
       return {
         userId: user.id,
         email: user.email,
         fullName: user.fullName,
+        accountNumber: accountNumber,  
         message: 'User registered successfully. Waiting for device verification.',
       };
     } catch (error) {
@@ -53,25 +75,24 @@ class AuthService {
 
   async loginCustomer(email, password, deviceId) {
     try {
-      // Find user
+  
       const user = await User.findOne({ where: { email } });
       if (!user) {
         throw new AppError(401, 'Invalid credentials');
       }
 
-      // Verify password
       const isValidPassword = await comparePassword(password, user.password);
       if (!isValidPassword) {
         throw new AppError(401, 'Invalid credentials');
       }
 
-      // Check device verification
+     
       const device = await Device.findOne({ where: { deviceId } });
       if (!device || !device.isVerified) {
         throw new AppError(403, 'Device not verified. Please wait for admin verification.');
       }
 
-      // Generate token
+      
       const token = generateToken(user.id, user.email);
 
       return new AuthResponseDTO(token, user);
@@ -82,16 +103,13 @@ class AuthService {
 
   async loginAdmin(email, password) {
     try {
-      // For admin, we'll check a hardcoded admin or from a separate admin table
-      // For now, simple hardcoded admin (in production, use admin table)
       const ADMIN_EMAIL = 'admin@savings.com';
-      const ADMIN_PASSWORD = 'admin123'; // In production, this is hashed
+      const ADMIN_PASSWORD = 'admin123';
 
       if (email !== ADMIN_EMAIL) {
         throw new AppError(401, 'Invalid admin credentials');
       }
 
-      // In production, compare hashed password
       if (password !== ADMIN_PASSWORD) {
         throw new AppError(401, 'Invalid admin credentials');
       }
