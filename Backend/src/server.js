@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const authRoutes = require('./routes/Authroutes');
+
 const { errorHandler } = require('./middleware/errorhandling');
 
 const app = express();
@@ -41,8 +42,8 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/accounts', accountRoutes);
 
-// ==================== ERROR HANDLING ====================
 app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Route not found' });
 });
