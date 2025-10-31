@@ -36,13 +36,13 @@ class AccountController {
     }
   }
 
-  // Deposit
+
   async deposit(req, res, next) {
     try {
       const userId = req.user.id;
       const { amount, description } = req.body;
 
-      // Validate
+      
       const validated = depositValidator({ amount, description });
 
       const result = await accountService.deposit(
