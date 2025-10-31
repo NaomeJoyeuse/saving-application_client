@@ -73,33 +73,41 @@ class AuthService {
     }
   }
 
-  async loginCustomer(email, password, deviceId) {
-    try {
-  
-      const user = await User.findOne({ where: { email } });
-      if (!user) {
-        throw new AppError(401, 'Invalid credentials');
-      }
-
-      const isValidPassword = await comparePassword(password, user.password);
-      if (!isValidPassword) {
-        throw new AppError(401, 'Invalid credentials');
-      }
-
-     
-      const device = await Device.findOne({ where: { deviceId } });
-      if (!device || !device.isVerified) {
-        throw new AppError(403, 'Device not verified. Please wait for admin verification.');
-      }
-
-      
-      const token = generateToken(user.id, user.email);
-
-      return new AuthResponseDTO(token, user);
-    } catch (error) {
-      throw error;
+async loginCustomer(email, password) {
+  try {
+    
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      throw new AppError(401, 'Invalid credentials');
     }
+
+  
+    const isValidPassword = await comparePassword(password, user.password);
+    if (!isValidPassword) {
+      throw new AppError(401, 'Invalid credentials');
+    }
+
+   
+    const device = await Device.findOne({
+      where: { userId: user.id, isVerified: true },
+    });
+
+    if (!device) {
+      throw new AppError(
+        403,
+        'No verified device found for this account. Please wait for admin verification.'
+      );
+    }
+
+   
+    const token = generateToken(user.id, user.email);
+
+    return new AuthResponseDTO(token, user);
+  } catch (error) {
+    throw error;
   }
+}
+
 
   async loginAdmin(email, password) {
     try {

@@ -1,24 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+// import AdminDashboard from './components/AdminLayout.js';
+// import CustomerManagePage from './pages/AllCustomer.js';
+// import Overview from './pages/adminDashboard.js';
+// import Devices from './pages/Devices';
+// import Transactions from './pages/transactions';
+
+
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+
+         {/* <Route path="/dashboard" element={<AdminDashboard />}>
+          <Route index element={<Overview />} />
+          <Route path="overview" element={< Overview />} />
+          <Route path="customers" element={<CustomerManagePage />} />
+          <Route path="devices" element={<Devices />} />
+          <Route path="transactions" element={<Transactions />} />
+        </Route> */}
+      </Routes>
+    </Router>
   );
 }
 
