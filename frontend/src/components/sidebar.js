@@ -1,11 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, History, User, LogOut, Wallet } from "lucide-react";
+import { Home, History, User, LogOut, Wallet,LayoutDashboard } from "lucide-react";
 
 export default function ClientSidebar() {
   const location = useLocation();
 
   const navItems = [
-    { path: "/dashboard", icon: Home, label: "Dashboard" },
+    { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
     { path: "/transactions", icon: History, label: "Transactions" },
     { path: "/profile", icon: User, label: "Profile" },
   ];
@@ -20,7 +20,7 @@ export default function ClientSidebar() {
           <Wallet className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Credit Jambo</h1>
+          <h1 className="text-xl font-bold text-gray-900">Saving App</h1>
           <p className="text-xs text-gray-500">Savings Account</p>
         </div>
       </div>

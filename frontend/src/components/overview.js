@@ -1,73 +1,174 @@
-import React from "react";
-import ClientLayout from "./ClientLayout";
-import { CreditCard, Activity, PieChart } from "lucide-react";
+// src/pages/ClientDashboard.jsx
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchBalance,
+  fetchTransactions,
+  depositFunds,
+  withdrawFunds,
+  clearAccountError,
+  clearAccountMessage,
+} from '../store/slices/accountSlice';
 
 export default function ClientDashboard() {
+  const dispatch = useDispatch();
+  const { balance, transactions, loading, error, message } = useSelector(
+    (state) => state.account
+  );
+
+  const [depositAmount, setDepositAmount] = useState('');
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [depositDesc, setDepositDesc] = useState('');
+  const [withdrawDesc, setWithdrawDesc] = useState('');
+
+  useEffect(() => {
+    dispatch(fetchBalance());
+    dispatch(fetchTransactions({ limit: 10 }));
+
+    return () => {
+      dispatch(clearAccountError());
+      dispatch(clearAccountMessage());
+    };
+  }, [dispatch]);
+
+  const handleDeposit = (e) => {
+    e.preventDefault();
+    dispatch(depositFunds({ amount: parseFloat(depositAmount), description: depositDesc }));
+    setDepositAmount('');
+    setDepositDesc('');
+  };
+
+  const handleWithdraw = (e) => {
+    e.preventDefault();
+    dispatch(withdrawFunds({ amount: parseFloat(withdrawAmount), description: withdrawDesc }));
+    setWithdrawAmount('');
+    setWithdrawDesc('');
+  };
+
   return (
-    <ClientLayout>
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
+      {/* Sidebar placeholder or use your ClientSidebar here */}
+      <div className="lg:w-64"></div>
 
-      {/* Top stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-2xl shadow flex items-center gap-4">
-          <div className="p-4 bg-emerald-50 rounded-full">
-            <CreditCard className="w-6 h-6 text-emerald-600" />
+      {/* Main content */}
+      <div className="flex-1 p-6">
+        <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+
+        {/* Messages */}
+        {message && (
+          <div className="bg-emerald-100 border border-emerald-400 text-emerald-700 px-4 py-2 rounded-lg mb-4">
+            {message}
           </div>
-          <div>
-            <p className="text-gray-500 text-sm">Account Balance</p>
-            <p className="text-xl font-bold">$3,450.00</p>
+        )}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg mb-4">
+            {error}
+          </div>
+        )}
+
+        {/* Balance card */}
+        <div className="bg-white p-6 rounded-2xl shadow-md mb-6">
+          <h2 className="text-lg font-medium text-gray-700">Current Balance</h2>
+          <p className="text-3xl font-bold text-emerald-600 mt-2">
+            ${balance?.toFixed(2) || '0.00'}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Deposit form */}
+          <div className="bg-white p-6 rounded-2xl shadow-md">
+            <h3 className="text-lg font-medium mb-4 text-gray-700">Deposit Funds</h3>
+            <form onSubmit={handleDeposit} className="space-y-3">
+              <input
+                type="number"
+                placeholder="Amount"
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value)}
+                className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Description"
+                value={depositDesc}
+                onChange={(e) => setDepositDesc(e.target.value)}
+                className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition disabled:opacity-50"
+              >
+                {loading ? 'Processing...' : 'Deposit'}
+              </button>
+            </form>
+          </div>
+
+          {/* Withdraw form */}
+          <div className="bg-white p-6 rounded-2xl shadow-md">
+            <h3 className="text-lg font-medium mb-4 text-gray-700">Withdraw Funds</h3>
+            <form onSubmit={handleWithdraw} className="space-y-3">
+              <input
+                type="number"
+                placeholder="Amount"
+                value={withdrawAmount}
+                onChange={(e) => setWithdrawAmount(e.target.value)}
+                className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Description"
+                value={withdrawDesc}
+                onChange={(e) => setWithdrawDesc(e.target.value)}
+                className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+              >
+                {loading ? 'Processing...' : 'Withdraw'}
+              </button>
+            </form>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow flex items-center gap-4">
-          <div className="p-4 bg-blue-50 rounded-full">
-            <Activity className="w-6 h-6 text-blue-600" />
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">Transactions</p>
-            <p className="text-xl font-bold">12</p>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-2xl shadow flex items-center gap-4">
-          <div className="p-4 bg-yellow-50 rounded-full">
-            <PieChart className="w-6 h-6 text-yellow-600" />
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">Savings Goal</p>
-            <p className="text-xl font-bold">$5,000</p>
+        {/* Transaction history */}
+        <div className="bg-white p-6 rounded-2xl shadow-md mt-6">
+          <h3 className="text-lg font-medium mb-4 text-gray-700">Recent Transactions</h3>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-600">Date</th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-600">Type</th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-600">Amount</th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-600">Description</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {transactions && transactions.length > 0 ? (
+                  transactions.map((tx) => (
+                    <tr key={tx.id}>
+                      <td className="px-4 py-2 text-sm text-gray-700">{new Date(tx.createdAt).toLocaleString()}</td>
+                      <td className="px-4 py-2 text-sm text-gray-700">{tx.type}</td>
+                      <td className="px-4 py-2 text-sm text-gray-700">{tx.amount.toFixed(2)}</td>
+                      <td className="px-4 py-2 text-sm text-gray-700">{tx.description}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="px-4 py-2 text-center text-sm text-gray-500">
+                      No transactions found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-
-      {/* Recent activity */}
-      <div className="bg-white p-6 rounded-2xl shadow">
-        <h2 className="text-xl font-bold mb-4">Recent Transactions</h2>
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-gray-200">
-              <th className="py-2 px-4 text-gray-500 text-sm">Date</th>
-              <th className="py-2 px-4 text-gray-500 text-sm">Description</th>
-              <th className="py-2 px-4 text-gray-500 text-sm">Amount</th>
-              <th className="py-2 px-4 text-gray-500 text-sm">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b border-gray-100">
-              <td className="py-2 px-4 text-gray-700 text-sm">2025-10-31</td>
-              <td className="py-2 px-4 text-gray-700 text-sm">Deposit</td>
-              <td className="py-2 px-4 text-gray-700 text-sm">+$500.00</td>
-              <td className="py-2 px-4 text-green-600 text-sm">Completed</td>
-            </tr>
-            <tr className="border-b border-gray-100">
-              <td className="py-2 px-4 text-gray-700 text-sm">2025-10-30</td>
-              <td className="py-2 px-4 text-gray-700 text-sm">Withdrawal</td>
-              <td className="py-2 px-4 text-gray-700 text-sm">-$200.00</td>
-              <td className="py-2 px-4 text-red-600 text-sm">Pending</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </ClientLayout>
+    </div>
   );
 }

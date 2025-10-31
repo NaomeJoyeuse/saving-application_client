@@ -1,14 +1,17 @@
-import React from "react";
-import ClientSidebar from "./ClientSidebar";
 
-export default function ClientLayout({ children }) {
+import React from "react";
+import { Outlet } from "react-router-dom";
+import ClientSidebar from "./sidebar";
+
+export default function ClientDashboardLayout() {
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      
+    <div className="flex h-screen bg-gray-50">
+ 
       <ClientSidebar />
 
-      <div className="flex-1 p-6">
-        {children}
+     
+      <div className="flex-1 p-6 overflow-y-auto">
+        <Outlet />
       </div>
     </div>
   );

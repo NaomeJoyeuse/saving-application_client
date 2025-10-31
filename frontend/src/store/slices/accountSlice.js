@@ -133,8 +133,9 @@ export const accountSlice = createSlice({
       .addCase(depositFunds.fulfilled, (state, action) => {
         state.loading = false;
         state.message = action.payload.message;
-        state.balance = action.payload.data.balance;
-      })
+        state.balance = action.payload.newBalance.balance;
+        })
+
       .addCase(depositFunds.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
@@ -150,7 +151,7 @@ export const accountSlice = createSlice({
       .addCase(withdrawFunds.fulfilled, (state, action) => {
         state.loading = false;
         state.message = action.payload.message;
-        state.balance = action.payload.data.balance;
+        state.balance = action.payload.newBalance.balance;
       })
       .addCase(withdrawFunds.rejected, (state, action) => {
         state.loading = false;
