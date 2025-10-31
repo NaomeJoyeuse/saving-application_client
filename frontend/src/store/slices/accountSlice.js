@@ -116,7 +116,7 @@ export const accountSlice = createSlice({
       })
       .addCase(fetchTransactions.fulfilled, (state, action) => {
         state.loading = false;
-        state.transactions = action.payload.data.transactions;
+        state.transactions = action.payload.data;
       })
       .addCase(fetchTransactions.rejected, (state, action) => {
         state.loading = false;
