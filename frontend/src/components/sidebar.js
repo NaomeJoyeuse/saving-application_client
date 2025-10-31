@@ -1,20 +1,18 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation} from "react-router-dom";
 import { Home, History, User, LogOut, Wallet,LayoutDashboard } from "lucide-react";
 
 export default function ClientSidebar() {
-  const location = useLocation();
-
+  const location = useLocation(); 
   const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-    { path: "/transactions", icon: History, label: "Transactions" },
-    { path: "/profile", icon: User, label: "Profile" },
+    { path: "/dashboard/transactions", icon: History, label: "Transactions" },
   ];
 
   const isActive = (path) => location.pathname === path;
 
   return (
     <div className="h-screen w-64 bg-white border-r border-gray-200 flex flex-col">
-      {/* Logo */}
+    
       <div className="p-6 border-b border-gray-200 flex items-center gap-3">
         <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center">
           <Wallet className="w-6 h-6 text-white" />
@@ -25,7 +23,6 @@ export default function ClientSidebar() {
         </div>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 p-4 mt-6">
         <ul className="space-y-2">
           {navItems.map((item) => {
@@ -50,13 +47,12 @@ export default function ClientSidebar() {
         </ul>
       </nav>
 
-      {/* Logout */}
       <div className="p-4 border-t border-gray-200">
         <button
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 w-full transition-colors font-medium"
           onClick={() => {
             localStorage.clear();
-            window.location.href = "/login";
+            window.location.href = "/";
           }}
         >
           <LogOut className="w-5 h-5" />

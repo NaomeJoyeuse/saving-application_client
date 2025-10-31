@@ -4,12 +4,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ClientDashboardLayout from './components/ClientLayout';
 import Overview from './components/overview';
-// import Overview from './pages/adminDashboard.js';
-// import Devices from './pages/Devices';
-// import Transactions from './pages/transactions';
-
-
-
+import Transactions from './pages/transactions.js';
 
 function App() {
   return (
@@ -22,9 +17,8 @@ function App() {
          <Route path="/dashboard" element={<ClientDashboardLayout />}>
           <Route index element={<Overview />} />
           <Route path="overview" element={< Overview />} />
-          {/* <Route path="customers" element={<CustomerManagePage />} />
-          <Route path="devices" element={<Devices />} />
-          <Route path="transactions" element={<Transactions />} /> */}
+          <Route path="transactions" element={< Transactions />} />
+        
         </Route> 
       </Routes>
     </Router>

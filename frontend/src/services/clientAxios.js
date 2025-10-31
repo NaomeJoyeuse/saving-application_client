@@ -1,7 +1,8 @@
 import axios from 'axios';
+console.log('REACT_APP_BASE_URL:', process.env.REACT_APP_BASE_URL);
 
 const clientAxios = axios.create({
-  baseURL: `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api`,
+  baseURL: `${process.env.REACT_APP_BASE_URL}/api`,
 });
 
 clientAxios.interceptors.request.use(
@@ -22,7 +23,7 @@ clientAxios.interceptors.response.use(
       console.error('Unauthorized, redirecting to login...');
       localStorage.removeItem('accessToken');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      window.location.href = '/';
     }
     return Promise.reject(error);
   }
